@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>我的代辦清單</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body>
+  <h1>我的代辦清單</h1>
+
+  <!-- 輸入區 -->
+  <!-- 當使用者按下「Add」按鈕，這個表單會用 POST 方法送資料到 /add_todoList。 -->
+  <form method="POST" action="/add_todoList" class="todo-input-grid">
+    <input placeholder="Type Todo Name..." name="name" required>
+    <input type="date" name="due_date" required>
+    <button type="submit">Add</button>
+  </form>
+
+
+  <!-- 清單區（由伺服器渲染） -->
+  <div class="todo-grid">
+    <% todos.forEach((todo)=> { %>
+      <div class="todo-wrap">
+        <div class="left">
+          <!-- 事項 -->
+          <div>
+            <%= todo.name %>
+          </div>
+        </div>
+        <div class="right">
+          <!-- 日期 -->
+          <div class="date">
+            <%= todo.due_date %>
+          </div>
+          <!-- 編輯 -->
+          <div class="edit">
+            <form method="GET" action="/edit/<%= todo.id %>" style="display:inline;">
+              <button type="submit">編輯</button>
+            </form>
+          </div>
+          <!-- 刪除 -->
+          <div class="delete">
+            <form method="POST" action="/delete_todoList/<%= todo.id %>?_method=DELETE" style="display:inline;">
+              <button type="submit" onclick="return confirm('確認刪除？')">刪除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+  </div>
+
+
+</body>
+
+</html>
