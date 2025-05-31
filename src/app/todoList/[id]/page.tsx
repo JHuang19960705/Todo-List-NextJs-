@@ -11,40 +11,46 @@ type Todo = {
 };
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: { id: string }; // 改成非 Promise 型別
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+  const { id } = params;
 
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const host = process.env.BASE_URL ?? "localhost:3000"; // 環境變數優先，否則 fallback
+  const host = process.env.BASE_URL ?? "localhost:3000";
 
-  const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      return {
+        title: "文章不存在 - ジョシュの台湾案内",
+        description: "很抱歉，我們找不到這篇文章。",
+      };
+    }
+
+    const todo: Todo = await res.json();
+
     return {
-      title: "文章不存在 - ジョシュの台湾案内",
-      description: "很抱歉，我們找不到這篇文章。",
+      title: `${todo.name} - ジョシュの台湾案内`,
+      description: todo.content.slice(0, 80),
+    };
+  } catch {
+    return {
+      title: "エラーが発生しました",
+      description: "メタデータの取得中にエラーが発生しました。",
     };
   }
-
-  const todo: Todo = await res.json();
-
-  return {
-    title: `${todo.name} - ジョシュの台湾案内`,
-    description: todo.content.slice(0, 80),
-  };
 }
 
 export default async function TodoDetailPage({ params }: Props) {
-  // 等待 params Promise 解析
-  const { id } = await params;
+  const { id } = params;
 
   const headersList = await headers();
-  const host = headersList.get("host");
+  const host = headersList.get("host") ?? "localhost:3000";
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
   const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
