@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ResultSetHeader } from 'mysql2';
 
-export async function POST(request: NextRequest) {
-  // 從 URL 路徑拿 id
-  const idStr = request.nextUrl.pathname.split('/').pop();
-  const idNum = idStr ? parseInt(idStr, 10) : NaN;
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // 從 params 直接取得 id
+  const { id } = await params;
+  const idNum = parseInt(id, 10);
 
   if (isNaN(idNum)) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
@@ -31,11 +34,13 @@ export async function POST(request: NextRequest) {
     );
 
     if (result.affectedRows === 0) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
     }
 
+    // 重新導向到首頁
     return NextResponse.redirect(new URL('/', request.url));
-  } catch {
+  } catch (error) {
+    console.error('Database error:', error);
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }

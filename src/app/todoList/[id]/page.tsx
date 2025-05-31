@@ -5,19 +5,22 @@ type Todo = {
   id: number;
   name: string;
   due_date: string;
-  content: string; // 新增這行
+  content: string;
 };
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function TodoDetailPage({ params }: Props) {
+  // 等待 params Promise 解析
+  const { id } = await params;
+
   const headersList = await headers();
   const host = headersList.get("host");
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
-  const res = await fetch(`${protocol}://${host}/api/todoList/${params.id}`, {
+  const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
     cache: "no-store",
   });
 
