@@ -1,11 +1,12 @@
-// app/todoList/[id]/edit/page.tsx
 import { headers } from "next/headers";
 import React from "react";
+import Link from "next/link";
 
 type Todo = {
   id: number;
   name: string;
   due_date: string;
+  content: string;  // 新增 content 欄位
 };
 
 interface EditPageProps {
@@ -17,12 +18,10 @@ interface EditPageProps {
 export default async function EditPage({ params }: EditPageProps) {
   const { id } = params;
 
-  // 取得 host 和 protocol
   const headersList = await headers();
   const host = headersList.get("host");
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
-  // 取得單一代辦
   const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
     cache: "no-store",
   });
@@ -37,6 +36,14 @@ export default async function EditPage({ params }: EditPageProps) {
   return (
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <h1>編輯代辦事項</h1>
+
+      {/* 返回首頁連結 */}
+      <Link
+        href="/"
+        style={{ display: "inline-block", marginBottom: 20, color: "blue" }}
+      >
+        ← 返回首頁
+      </Link>
 
       <form method="POST" action={`/api/todoList/${id}/edit`}>
         <div style={{ marginBottom: 12 }}>
@@ -59,6 +66,18 @@ export default async function EditPage({ params }: EditPageProps) {
             name="due_date"
             defaultValue={todo.due_date}
             required
+            style={{ width: "100%", padding: 8 }}
+          />
+        </div>
+
+        <div style={{ marginBottom: 12 }}>
+          <label htmlFor="content">內容：</label>
+          <textarea
+            id="content"
+            name="content"
+            defaultValue={todo.content}
+            required
+            rows={6}
             style={{ width: "100%", padding: 8 }}
           />
         </div>

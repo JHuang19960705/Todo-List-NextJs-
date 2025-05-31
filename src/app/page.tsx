@@ -1,6 +1,7 @@
 import React from "react";
 import { headers } from "next/headers";
 import DeleteForm from "./deletForm";
+import Link from "next/link";
 
 type Todo = {
   id: number;
@@ -28,21 +29,7 @@ export default async function Page() {
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <h1>我的代辦清單</h1>
 
-      <form method="POST" action="/api/todoList" style={{ marginBottom: 20 }}>
-        <input
-          name="name"
-          placeholder="Type Todo Name..."
-          required
-          style={{ marginRight: 8 }}
-        />
-        <input
-          type="date"
-          name="due_date"
-          required
-          style={{ marginRight: 8 }}
-        />
-        <button type="submit">Add</button>
-      </form>
+      <Link href="/add">新增文章</Link>
 
       <div>
         {todos.map((todo) => (
@@ -64,6 +51,19 @@ export default async function Page() {
             </div>
 
             <div>
+              <a
+                href={`/todoList/${todo.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  marginRight: 8,
+                  textDecoration: "none",
+                  color: "green",
+                  cursor: "pointer",
+                }}
+              >
+                瀏覽
+              </a>
               <a
                 href={`/todoList/${todo.id}/edit`}
                 style={{

@@ -14,15 +14,20 @@ export async function POST(
   const data = await request.formData();
   const name = data.get('name');
   const due_date = data.get('due_date');
+  const content = data.get('content');
 
-  if (typeof name !== 'string' || typeof due_date !== 'string') {
+  if (
+    typeof name !== 'string' ||
+    typeof due_date !== 'string' ||
+    typeof content !== 'string'
+  ) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
 
   try {
     const [result] = await pool.query<ResultSetHeader>(
-      'UPDATE todoList SET name = ?, due_date = ? WHERE id = ?',
-      [name, due_date, idNum]
+      'UPDATE todoList SET name = ?, due_date = ?, content = ? WHERE id = ?',
+      [name, due_date, content, idNum]
     );
 
     if (result.affectedRows === 0) {

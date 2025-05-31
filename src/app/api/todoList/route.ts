@@ -15,15 +15,27 @@ export async function POST(request: NextRequest) {
     const data = await request.formData();
     const name = data.get('name');
     const due_date = data.get('due_date');
+    const content = data.get('content');
 
-    if (typeof name !== 'string' || typeof due_date !== 'string') {
+    if (
+      typeof name !== 'string' || 
+      typeof due_date !== 'string' || 
+      (content !== null && typeof content !== 'string')
+    ) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
-    await pool.query('INSERT INTO todoList (name, due_date) VALUES (?, ?)', [name, due_date]);
+    await pool.query(
+      'INSERT INTO todoList (name, due_date, content) VALUES (?, ?, ?)', 
+      [name, due_date, content]
+    );
 
     return NextResponse.redirect(new URL('/', request.url));
-  } catch (error) {
-    return NextResponse.json({ error: 'Database error' }, { status: 500 });
+  } catch (error: unknown) {
+    let message = 'Database error';
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
