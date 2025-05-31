@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ResultSetHeader } from 'mysql2';
 
-export async function POST(request: NextRequest, context: any) {
+type Params = {
+  params: {
+    id: string;
+  };
+};
+
+export async function POST(request: NextRequest, context: Params) {
   const idNum = parseInt(context.params.id, 10);
   if (isNaN(idNum)) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
