@@ -4,15 +4,18 @@ import { ResultSetHeader } from 'mysql2';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const idNum = parseInt(params.id, 10);
+  const idNum = parseInt(context.params.id, 10);
   if (isNaN(idNum)) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   }
 
   try {
-    const [result] = await pool.query<ResultSetHeader>('DELETE FROM todoList WHERE id = ?', [idNum]);
+    const [result] = await pool.query<ResultSetHeader>(
+      'DELETE FROM todoList WHERE id = ?',
+      [idNum]
+    );
 
     if (result.affectedRows === 0) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
