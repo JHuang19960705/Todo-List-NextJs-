@@ -23,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
     return NextResponse.json(rows[0]);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }
