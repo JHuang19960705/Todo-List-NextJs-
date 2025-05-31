@@ -6,16 +6,10 @@ type Todo = {
   id: number;
   name: string;
   due_date: string;
-  content: string;  // 新增 content 欄位
+  content: string;
 };
 
-interface EditPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function EditPage({ params }: EditPageProps) {
+export default async function EditPage({ params }: { params: { id: string } }) {
   const { id } = params;
 
   const headersList = await headers();
@@ -37,11 +31,7 @@ export default async function EditPage({ params }: EditPageProps) {
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <h1>編輯代辦事項</h1>
 
-      {/* 返回首頁連結 */}
-      <Link
-        href="/"
-        style={{ display: "inline-block", marginBottom: 20, color: "blue" }}
-      >
+      <Link href="/" style={{ display: "inline-block", marginBottom: 20, color: "blue" }}>
         ← 返回首頁
       </Link>
 
