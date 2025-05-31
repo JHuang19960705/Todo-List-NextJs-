@@ -13,8 +13,8 @@ type Todo = {
 // 只動態載入 Client Component 包裝器，不直接使用 ssr: false 的動態載入
 const EditorWrapper = dynamic(() => import("../../../../components/EditorWithPreview"));
 
-export default async function EditPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params; // 等待 params Promise 解包
 
   const headersList = await headers();
   const host = headersList.get("host");
@@ -51,7 +51,6 @@ export default async function EditPage({ params }: { params: { id: string } }) {
         <div style={{ marginBottom: 12 }}>
           <label htmlFor="content">內容：</label>
           <EditorWrapper initialContent={todo.content} />
-          {/* 因為內容會在 EditorWrapper 用狀態管理並送出，隱藏欄位改成放在 EditorWithPreview 裡 */}
         </div>
 
         <button type="submit" style={{ padding: "8px 16px" }}>
@@ -61,3 +60,4 @@ export default async function EditPage({ params }: { params: { id: string } }) {
     </main>
   );
 }
+
