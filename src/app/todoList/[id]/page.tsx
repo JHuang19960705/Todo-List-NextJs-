@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${todo.name} - ジョシュの台湾案内`,
       description: todo.content.slice(0, 80),
     };
-  } catch (e) {
+  } catch {
     // fetch 過程若有例外，回傳一組錯誤時的 metadata
     return {
       title: "エラーが発生しました",
