@@ -1,5 +1,4 @@
 // src/app/todoList/[id]/page.tsx
-
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -13,23 +12,23 @@ type Todo = {
   content: string;
 };
 
-// props 型別：把 params 改成同步的 { id: string }
+// props 型別：params 改成 Promise
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = params;
-
+  const { id } = await params; // 需要 await params
+  
   // fetch 用的 host：開發時用 localhost:3000，生產時使用環境變數 BASE_URL
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
   const host = process.env.BASE_URL ?? "localhost:3000";
-
+  
   try {
     const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
       cache: "no-store",
     });
-
+    
     if (!res.ok) {
       // 若 API 回 404 或其他錯誤，就回傳「文章不存在」的 metadata
       return {
@@ -37,9 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: "很抱歉，我們找不到這篇文章。",
       };
     }
-
+    
     const todo: Todo = await res.json();
-
     return {
       title: `${todo.name} - ジョシュの台湾案内`,
       description: todo.content.slice(0, 80),
@@ -54,25 +52,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TodoDetailPage({ params }: Props) {
-  const { id } = params;
-
+  const { id } = await params; // 需要 await params
+  
   // 因為這是 Server Component，可以用 headers() 拿到 host
   const headersList = await headers();
   const host = headersList.get("host") ?? "localhost:3000";
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-
+  
   // 從 API 讀取單筆 todo
   const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
     cache: "no-store",
   });
-
+  
   if (!res.ok) {
     // 若 API 回錯誤，就導向 404
     notFound();
   }
-
+  
   const todo: Todo = await res.json();
-
+  
   return (
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <Link
@@ -86,10 +84,13 @@ export default async function TodoDetailPage({ params }: Props) {
       >
         ← ホームに戻る
       </Link>
+      
       <h1>{todo.name}</h1>
+      
       <div>
         <strong>日付：</strong> {todo.due_date}
       </div>
+      
       <div>
         <strong>內容：</strong>
         <p style={{ whiteSpace: "pre-wrap" }}>{todo.content}</p>
