@@ -9,8 +9,9 @@ type Todo = {
   content: string;
 };
 
-export default async function EditPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
+  // 等待 params Promise 解析
+  const { id } = await params;
 
   const headersList = await headers();
   const host = headersList.get("host");
