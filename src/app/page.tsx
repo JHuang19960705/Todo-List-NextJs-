@@ -27,13 +27,13 @@ export default async function Page() {
 
   return (
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>我的代辦清單</h1>
+      <h2>ジョシュの台湾案内</h2>
 
-      <Link href="/add">新增文章</Link>
+      <Link href="/add">新建文章</Link>
 
       <div>
         {todos.map((todo) => (
-          <div
+          <article
             key={todo.id}
             style={{
               display: "flex",
@@ -46,39 +46,43 @@ export default async function Page() {
             }}
           >
             <div>
-              <div>{todo.name}</div>
-              <div style={{ fontSize: 12, color: "#666" }}>{todo.due_date}</div>
+              <h3>{todo.name}</h3>
+              <time
+                dateTime={todo.due_date}
+                style={{ fontSize: 12, color: "#666" }}
+              >
+                {todo.due_date}
+              </time>
             </div>
 
             <div>
-              <a
+              <Link
                 href={`/todoList/${todo.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
                   marginRight: 8,
-                  textDecoration: "none",
                   color: "green",
+                  textDecoration: "none",
                   cursor: "pointer",
                 }}
               >
-                瀏覽
-              </a>
-              <a
+                閲覧
+              </Link>
+              <Link
                 href={`/todoList/${todo.id}/edit`}
                 style={{
                   marginRight: 8,
-                  textDecoration: "none",
                   color: "blue",
-                  cursor: "pointer",
+                  textDecoration: "none",
                 }}
               >
-                編輯
-              </a>
+                編集
+              </Link>
 
               <DeleteForm todoId={todo.id} />
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </main>

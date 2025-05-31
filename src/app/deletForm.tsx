@@ -7,7 +7,7 @@ type DeleteFormProps = {
 
 export default function DeleteForm({ todoId }: DeleteFormProps) {
   function handleSubmit(e: React.FormEvent) {
-    if (!confirm('確定要刪除嗎？')) {
+    if (!confirm('本当に削除しますか？')) {
       e.preventDefault();
     }
   }
@@ -20,7 +20,7 @@ export default function DeleteForm({ todoId }: DeleteFormProps) {
       onSubmit={handleSubmit}
     >
       <button type="submit" style={{ color: 'red', cursor: 'pointer' }}>
-        刪除
+        削除
       </button>
     </form>
   );

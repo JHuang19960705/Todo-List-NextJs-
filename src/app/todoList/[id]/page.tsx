@@ -1,5 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type Todo = {
   id: number;
@@ -11,6 +13,31 @@ type Todo = {
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const host = process.env.BASE_URL ?? "localhost:3000"; // 環境變數優先，否則 fallback
+
+  const res = await fetch(`${protocol}://${host}/api/todoList/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return {
+      title: "文章不存在 - ジョシュの台湾案内",
+      description: "很抱歉，我們找不到這篇文章。",
+    };
+  }
+
+  const todo: Todo = await res.json();
+
+  return {
+    title: `${todo.name} - ジョシュの台湾案内`,
+    description: todo.content.slice(0, 80),
+  };
+}
 
 export default async function TodoDetailPage({ params }: Props) {
   // 等待 params Promise 解析
@@ -25,27 +52,27 @@ export default async function TodoDetailPage({ params }: Props) {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Fetch 代辦細節失敗：${res.status} ${text}`);
+    notFound();
   }
 
   const todo: Todo = await res.json();
 
   return (
     <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>代辦詳情</h1>
-      {/* 返回首頁 */}
       <Link
         href="/"
-        style={{ display: "inline-block", marginBottom: 20, color: "blue" }}
+        style={{
+          display: "inline-block",
+          marginBottom: 20,
+          color: "blue",
+          fontSize: 16,
+        }}
       >
-        ← 返回首頁
+        ← ホームに戻る
       </Link>
+      <h1>{todo.name}</h1>
       <div>
-        <strong>名稱：</strong> {todo.name}
-      </div>
-      <div>
-        <strong>截止日期：</strong> {todo.due_date}
+        <strong>日付：</strong> {todo.due_date}
       </div>
       <div>
         <strong>內容：</strong>
