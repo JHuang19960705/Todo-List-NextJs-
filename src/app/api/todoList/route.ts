@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const [rows] = await pool.query('SELECT * FROM todoList ORDER BY due_date ASC');
     return NextResponse.json(rows);
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }

@@ -19,7 +19,7 @@ export async function POST(
     }
 
     return NextResponse.redirect(new URL('/', request.url));
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
 }
